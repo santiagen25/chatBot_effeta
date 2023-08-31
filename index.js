@@ -2,8 +2,11 @@
 
 const qrcode = require('qrcode-terminal');
 
-const { Client } = require('whatsapp-web.js');
-const client = new Client();
+const { Client, LocalAuth } = require('whatsapp-web.js');
+//const client = new Client();
+const client = new Client({
+    authStrategy: new LocalAuth()
+})
 
 async function eseprarContacto(message) {
     let result = await message.getContact();
@@ -42,7 +45,8 @@ client.on('message_create', async (msg) => {
         let chats = await client.getChats();
         let allMsgChats = null;
 
-        const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
+        //const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
+        const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
         const unaPersona = msg.body === '!calculame';
         const quePersona = (await msg.getContact()).pushname;
         let mensajesLeidos = 0;

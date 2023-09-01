@@ -3,7 +3,7 @@
 const qrcode = require('qrcode-terminal');
 
 const { Client, LocalAuth } = require('whatsapp-web.js');
-//const client = new Client();
+
 const client = new Client({
     authStrategy: new LocalAuth()
 })
@@ -31,7 +31,7 @@ client.on('message', message => {
 
 client.on('message_create', async (msg) => {
     // Fired on all message creations, including your own
-    if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.includes('!calculale')) {
+    if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.startsWith('!calculale')) {
 
         let misas = 0;
         let misterios = 0;
@@ -49,7 +49,8 @@ client.on('message_create', async (msg) => {
         //const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
         const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
         const unaPersona = msg.body === '!calculame' || msg.body.includes("!calculale");
-        const quePersona = msg.body === '!calculame' ? (await msg.getContact()).pushname : (await client.getContactById(msg.body.substring(11,22)+'@c.us')).pushname
+        let quePersona;
+        if(unaPersona) quePersona = msg.body === '!calculame' ? (await msg.getContact()).pushname : (await client.getContactById(msg.body.substring(11,22)+'@c.us')).pushname
         let mensajesLeidos = 0;
 
         //cosas para records
@@ -367,17 +368,17 @@ client.on('message_create', async (msg) => {
                 console.log("actualesRecords")
                 console.log(actualesRecords)
 
-                msg.reply("Records:\n\nMas misas 🍞🍷: _*"+actualesRecords[0].nom+"*_ ➡ *"+actualesRecords[0].num+
+                msg.reply("Records:\n\nMás misas 🍞🍷: _*"+actualesRecords[0].nom+"*_ ➡ *"+actualesRecords[0].num+
                             //" ("+((actualesRecords[0].num*100)/misas).toFixed(2)+"%)"+
                             "*\n"+
-                            "Mas misterios del rosario 🌹: _*"+actualesRecords[1].nom+"*_ ➡ *"+actualesRecords[1].num+"*\n"+
-                            "Mas plegarias 🙏: _*"+actualesRecords[2].nom+"*_ ➡ *"+actualesRecords[2].num+"*\n"+
-                            "Mas horas delante del santísimo 🕯: _*"+actualesRecords[3].nom+"*_ ➡ *"+(actualesRecords[3].num/2)+"*\n"+
-                            "Mas horas de trabajo 💪: _*"+actualesRecords[4].nom+"*_ ➡ *"+actualesRecords[4].num+"*\n"+
-                            "Mas horas de estudio 📖: _*"+actualesRecords[5].nom+"*_ ➡ *"+(actualesRecords[5].num/2)+"*\n"+
-                            "Mas esfuerzos 🥇: _*"+actualesRecords[6].nom+"*_ ➡ *"+actualesRecords[6].num+"*\n"+
-                            "Mas abstinencias 🚫: _*"+actualesRecords[7].nom+"*_ ➡ *"+actualesRecords[7].num+"*\n"+
-                            "Mas actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
+                            "Más misterios del rosario 🌹: _*"+actualesRecords[1].nom+"*_ ➡ *"+actualesRecords[1].num+"*\n"+
+                            "Más plegarias 🙏: _*"+actualesRecords[2].nom+"*_ ➡ *"+actualesRecords[2].num+"*\n"+
+                            "Más horas delante del santísimo 🕯: _*"+actualesRecords[3].nom+"*_ ➡ *"+(actualesRecords[3].num/2)+"*\n"+
+                            "Más horas de trabajo 💪: _*"+actualesRecords[4].nom+"*_ ➡ *"+actualesRecords[4].num+"*\n"+
+                            "Más horas de estudio 📖: _*"+actualesRecords[5].nom+"*_ ➡ *"+(actualesRecords[5].num/2)+"*\n"+
+                            "Más esfuerzos 🥇: _*"+actualesRecords[6].nom+"*_ ➡ *"+actualesRecords[6].num+"*\n"+
+                            "Más abstinencias 🚫: _*"+actualesRecords[7].nom+"*_ ➡ *"+actualesRecords[7].num+"*\n"+
+                            "Más actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
                             "\nMensajes leidos: "+mensajesLeidos)
             }
 
@@ -386,7 +387,20 @@ client.on('message_create', async (msg) => {
             msg.reply("ERROR: No se ha encontrado el grupo.")
         }
     } else if (msg.body === "!help" || msg.body === "!effeta" || msg.body === "!ayuda") {
-        msg.reply("Escribe !calcula, !calculame o !records")
+        msg.reply("Escribe !calcula, !calculame, !calculale 34XXXXXXXXX, !records o !info")
+    } else if (msg.body === "!info") {
+        msg.reply("!calcula: Coge todos los mensajes y recuenta los emoticonos de cada uno.\n\n"+
+                    "!calculame: Coge solo los mensajes de la persona que escribe el comando y muestra el recuento de emoticonos de estos.\n\n"+
+                    "!calculale: Es obligatorio poner un numero de teléfono separado de un espacio. Coge los mensajes del numero de teléfono que le hayas pedido, y los cuenta.\n\n"+
+                    "!records: cuenta los emoticonos de cada persona, y crea una tabla de records con las personas que han introducido más emoticonos.\n\n"+
+                    "!help, !effeta, !ayuda: Ayuda general.\n\n"+
+                    "!info: Se muestran estos comandos.\n\n"+
+                    "!cuantoqueda: dias que quedan para el retiro")
+    } else if (msg.body === "!cuantoqueda") {
+        const diaActual = new Date();
+        const diaDelRetiro = new Date("2023-09-29");
+        const diasQueQuedan = (diaDelRetiro.getTime() - diaActual.getTime()) / (1000 * 3600 * 24)
+        msg.reply("Quedan *"+diasQueQuedan.toFixed()+"* dias para el retiro.");
     }
 });
 

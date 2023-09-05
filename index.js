@@ -46,11 +46,19 @@ client.on('message_create', async (msg) => {
         let chats = await client.getChats();
         let allMsgChats = null;
 
+        //punteros
         //const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
         const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
+        //const fechaDesdeDondeSeLee = '2023-09-04';//si está '' significa que coge todos
+        const fechaDesdeDondeSeLee = '';
+
         const unaPersona = msg.body === '!calculame' || msg.body.includes("!calculale");
         let quePersona;
-        if(unaPersona) quePersona = msg.body === '!calculame' ? (await msg.getContact()).pushname : (await client.getContactById(msg.body.substring(11,22)+'@c.us')).pushname
+        try{
+            if(unaPersona) quePersona = msg.body === '!calculame' ? (await msg.getContact()).pushname : (await client.getContactById(msg.body.substring(11,22)+'@c.us')).pushname
+        } catch (error) {
+            msg.reply("ERROR: no se ha podido leer el numero de telefono. Vamos a hacer el recuento para tu usuario.");
+        }
         let mensajesLeidos = 0;
 
         //cosas para records
@@ -69,9 +77,17 @@ client.on('message_create', async (msg) => {
             }
         }
 
+        console.log("Este es el primer mensaje: "+allMsgChats[0].body)
+        console.log("Intento de fecha: "+ (new Date(allMsgChats[0].timestamp)))
+        console.log("fecha para mensajes: "+ (new Date(fechaDesdeDondeSeLee)))
+        //aqui se habla de la issue https://github.com/pedroslopez/whatsapp-web.js/issues/1547
+
         if (allMsgChats != null) {
             console.log("Leyendo mensajes...");
             for(let i = 0; i < allMsgChats.length; i++){
+                //checkeamos fecha del mensaje
+                if(fechaDesdeDondeSeLee != '' && allMsgChats[i].timestamp < (new Date(fechaDesdeDondeSeLee)) / 1000) continue;
+
                 //misas y cosas de esta persona en concreto
                 let misasMoment = 0;
                 let misteriosMoment = 0;
@@ -395,12 +411,15 @@ client.on('message_create', async (msg) => {
                     "!records: cuenta los emoticonos de cada persona, y crea una tabla de records con las personas que han introducido más emoticonos.\n\n"+
                     "!help, !effeta, !ayuda: Ayuda general.\n\n"+
                     "!info: Se muestran estos comandos.\n\n"+
-                    "!cuantoqueda: dias que quedan para el retiro")
+                    "!cuantoqueda: dias que quedan para el retiro.\n\n"+
+                    "!punteros: De donde se sacan los datos, y desde cuando.")
     } else if (msg.body === "!cuantoqueda") {
         const diaActual = new Date();
         const diaDelRetiro = new Date("2023-09-29");
         const diasQueQuedan = (diaDelRetiro.getTime() - diaActual.getTime()) / (1000 * 3600 * 24)
         msg.reply("Quedan *"+diasQueQuedan.toFixed()+"* dias para el retiro.");
+    } else if (msg.body === "!punteros") {
+        msg.reply("Santi aun está trabajando en esta funcionalidad, espera unos dias.")
     }
 });
 

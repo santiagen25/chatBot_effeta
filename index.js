@@ -31,7 +31,14 @@ client.on('message', message => {
 
 client.on('message_create', async (msg) => {
     // Fired on all message creations, including your own
-    if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.startsWith('!calculale')) {
+
+    //punteros
+    //const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
+    const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
+    //const fechaDesdeDondeSeLee = '2023-09-04';//si está '' significa que coge todos
+    const fechaDesdeDondeSeLee = '2023-08-01';
+
+    if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.startsWith('!calculale') || msg.body.startsWith('!calculadesde')) {
 
         let misas = 0;
         let misterios = 0;
@@ -46,18 +53,12 @@ client.on('message_create', async (msg) => {
         let chats = await client.getChats();
         let allMsgChats = null;
 
-        //punteros
-        //const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
-        const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
-        //const fechaDesdeDondeSeLee = '2023-09-04';//si está '' significa que coge todos
-        const fechaDesdeDondeSeLee = '';
-
         const unaPersona = msg.body === '!calculame' || msg.body.includes("!calculale");
         let quePersona;
         try{
             if(unaPersona) quePersona = msg.body === '!calculame' ? (await msg.getContact()).pushname : (await client.getContactById(msg.body.substring(11,22)+'@c.us')).pushname
         } catch (error) {
-            msg.reply("ERROR: no se ha podido leer el numero de telefono. Vamos a hacer el recuento para tu usuario.");
+            msg.reply("ERROR: no se ha podido leer el numero de telefono. Vamos a hacer el recuento para tu propio usuario.");
         }
         let mensajesLeidos = 0;
 
@@ -77,16 +78,20 @@ client.on('message_create', async (msg) => {
             }
         }
 
-        console.log("Este es el primer mensaje: "+allMsgChats[0].body)
-        console.log("Intento de fecha: "+ (new Date(allMsgChats[0].timestamp)))
-        console.log("fecha para mensajes: "+ (new Date(fechaDesdeDondeSeLee)))
+        //console.log("Este es el primer mensaje: "+allMsgChats[0].body)
+        //console.log("Intento de fecha: "+ (new Date(allMsgChats[0].timestamp)))
+        //console.log("fecha para mensajes: "+ (new Date(fechaDesdeDondeSeLee)))
         //aqui se habla de la issue https://github.com/pedroslopez/whatsapp-web.js/issues/1547
 
         if (allMsgChats != null) {
             console.log("Leyendo mensajes...");
             for(let i = 0; i < allMsgChats.length; i++){
                 //checkeamos fecha del mensaje
-                if(fechaDesdeDondeSeLee != '' && allMsgChats[i].timestamp < (new Date(fechaDesdeDondeSeLee)) / 1000) continue;
+                try {
+                    if((fechaDesdeDondeSeLee != '' && allMsgChats[i].timestamp < (new Date(fechaDesdeDondeSeLee)) / 1000) || msg.body.startsWith('!calculadesde') && allMsgChats[i].timestamp < (new Date(msg.body.substring(14,24)) / 1000)) continue;
+                } catch (error) {
+                    msg.reply("ERORR: Fecha introducida incorrecta")
+                }
 
                 //misas y cosas de esta persona en concreto
                 let misasMoment = 0;
@@ -408,6 +413,7 @@ client.on('message_create', async (msg) => {
         msg.reply("!calcula: Coge todos los mensajes y recuenta los emoticonos de cada uno.\n\n"+
                     "!calculame: Coge solo los mensajes de la persona que escribe el comando y muestra el recuento de emoticonos de estos.\n\n"+
                     "!calculale: Es obligatorio poner un numero de teléfono separado de un espacio. Coge los mensajes del numero de teléfono que le hayas pedido, y los cuenta.\n\n"+
+                    "!calculadesde: Es obligatorio poner una fecha con formato YYYY-MM-DD (2023-09-15) o MM-DD-YYYY (09-15-2023) separada de un espacio. Coge los mensajes a partir de la fecha introducida.\n\n"+
                     "!records: cuenta los emoticonos de cada persona, y crea una tabla de records con las personas que han introducido más emoticonos.\n\n"+
                     "!help, !effeta, !ayuda: Ayuda general.\n\n"+
                     "!info: Se muestran estos comandos.\n\n"+
@@ -419,7 +425,8 @@ client.on('message_create', async (msg) => {
         const diasQueQuedan = (diaDelRetiro.getTime() - diaActual.getTime()) / (1000 * 3600 * 24)
         msg.reply("Quedan *"+diasQueQuedan.toFixed()+"* dias para el retiro.");
     } else if (msg.body === "!punteros") {
-        msg.reply("Santi aun está trabajando en esta funcionalidad, espera unos dias.")
+        msg.reply("Punteros:\n\nNombre del grupo que se usa: " + nombreActualDelGrupo + "\n" +
+                    "Fecha desde cuando se leen los mensajes: " + new Date(fechaDesdeDondeSeLee).toLocaleDateString('en-CA'))
     }
 });
 

@@ -37,6 +37,8 @@ client.on('message_create', async (msg) => {
     const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
     //const fechaDesdeDondeSeLee = '2023-09-04';//si está '' significa que coge todos
     const fechaDesdeDondeSeLee = '2023-08-01';
+    const fechaDelRetiro = '2023-09-29';
+    //const fechaDelRetiro = '2023-10-13';
 
     if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.startsWith('!calculale') || msg.body.startsWith('!calculadesde')) {
 
@@ -115,7 +117,8 @@ client.on('message_create', async (msg) => {
                 const ffc = currentmsg.substring(0,7)
                 if(stringIncludesEmoji(ffc)) {
                     console.log("descartamos este mensaje, no se han encontrado emojis cercanos")
-                    continue;
+                    if(i < allMsgChats.length) continue;
+                    break;
                 }
 
                 //vamos a intentar arreglar la paridad de Blanca Lauci
@@ -421,18 +424,19 @@ client.on('message_create', async (msg) => {
                     "!punteros: De donde se sacan los datos, y desde cuando.")
     } else if (msg.body === "!cuantoqueda") {
         const diaActual = new Date();
-        const diaDelRetiro = new Date("2023-09-29");
+        const diaDelRetiro = new Date(fechaDelRetiro);
         const diasQueQuedan = (diaDelRetiro.getTime() - diaActual.getTime()) / (1000 * 3600 * 24)
         msg.reply("Quedan *"+diasQueQuedan.toFixed()+"* dias para el retiro.");
     } else if (msg.body === "!punteros") {
         msg.reply("Punteros:\n\nNombre del grupo que se usa: " + nombreActualDelGrupo + "\n" +
-                    "Fecha desde cuando se leen los mensajes: " + new Date(fechaDesdeDondeSeLee).toLocaleDateString('en-CA'))
+                    "Fecha desde cuando se leen los mensajes: " + new Date(fechaDesdeDondeSeLee).toLocaleDateString('en-CA') + "\n" +
+                    "Fecha del retiro: " + new Date(fechaDelRetiro).toLocaleDateString('en-CA'))
     }
 });
 
 function calcularXCosas(msg, iteracion){
     //console.log("\t\t\t\tmensaje: "+msg+"\titeracion: "+iteracion);
-    if(msg.length > iteracion && (msg.charAt(iteracion) == 'x' || msg.charAt(iteracion) == 'X')) {
+    if(msg.length > iteracion && (msg.charAt(iteracion) == 'x' || msg.charAt(iteracion) == 'X' || msg.charAt(iteracion) == '*')) {
         //se multiplica, vamos a ver por cuanto
         //console.log("\t\tparece que hay una X")
         if(!isNaN(msg.charAt(iteracion+1))) {
@@ -446,7 +450,7 @@ function calcularXCosas(msg, iteracion){
                 return parseInt(msg.charAt(iteracion+1));
             }
         }
-    } else if(msg.length > (iteracion+1) && (msg.charAt(iteracion+1) == 'x' || msg.charAt(iteracion+1) == 'X')) {
+    } else if(msg.length > (iteracion+1) && (msg.charAt(iteracion+1) == 'x' || msg.charAt(iteracion+1) == 'X' || msg.charAt(iteracion+1) == '*')) {
         //se multiplica, vamos a ver por cuanto
         //console.log("\t\tparece que hay una X")
         if(!isNaN(msg.charAt(iteracion+2))) {
@@ -488,5 +492,4 @@ function stringIncludesEmoji (s) {
                 !s.includes('🎖') && !s.includes('🥇') && !s.includes('🏅') && !s.includes('🥉') && !s.includes('🥈') &&
                 !s.includes('🚫') &&
                 !s.includes('🍻')
-
 }

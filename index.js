@@ -51,6 +51,7 @@ client.on('message_create', async (msg) => {
         let esfuerzos = 0;
         let abstinencias = 0;
         let fraternidad = 0;
+        let letanias = 0;
 
         let chats = await client.getChats();
         let allMsgChats = null;
@@ -105,6 +106,7 @@ client.on('message_create', async (msg) => {
                 let esfuerzosMoment = 0;
                 let abstinenciasMoment = 0;
                 let fraternidadMoment = 0;
+                let letaniasMoment = 0;
                 const quePersonaMoment = (await allMsgChats[i].getContact()).pushname
 
                 if(unaPersona && !(quePersona === quePersonaMoment)) continue;
@@ -314,6 +316,21 @@ client.on('message_create', async (msg) => {
                         break;
                     }
                 }
+                if (currentmsg.indexOf('😇') >= 0) {
+                    let whereIsEmoji = currentmsg.indexOf('😇');
+                    while(true){
+                        let cantidad = calcularXCosas(currentmsg, whereIsEmoji+2);
+                        letanias = letanias + cantidad
+                        letaniasMoment = cantidad;
+                        console.log("aqui hay "+cantidad+" letanias del rosario");
+                        if(currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('😇') >= 0){
+                            submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
+                            whereIsEmoji = submsg.indexOf('😇') + whereIsEmoji + 2;
+                            continue;
+                        }
+                        break;
+                    }
+                }
 
                 //después de comprobar todo se deberia hacer un substring para ver si hay emojis repetidos
 
@@ -327,6 +344,7 @@ client.on('message_create', async (msg) => {
                 // else if(allMsgChats[i].body.includes('🥇')) console.log("Un esfuerzo");
                 // else if(allMsgChats[i].body.includes('🚫')) console.log("Una abstinencia");
                 // else if(allMsgChats[i].body.includes('🍻')) console.log("Un acto de fraternidad");
+                // else if(allMsgChats[i].body.includes('😇')) console.log("letanias del rosario");
 
 
                 if(isRecords){
@@ -344,6 +362,7 @@ client.on('message_create', async (msg) => {
                             arrayItem.data[6] += esfuerzosMoment
                             arrayItem.data[7] += abstinenciasMoment
                             arrayItem.data[8] += fraternidadMoment
+                            arrayItem.data[9] += letaniasMoment
                             arrayItem.mensajesLeidos++
 
                             seRepiteNombre = true
@@ -354,7 +373,7 @@ client.on('message_create', async (msg) => {
                     if (!seRepiteNombre) {
                         recordsArray.push({
                             nombre: quePersonaMoment,
-                            data: [misasMoment,misteriosMoment,pregariasMoment,mediaHoraSantisimoMoment,horaTrabajoMoment,mediaHoraEstudioMoment,esfuerzosMoment,abstinenciasMoment,fraternidadMoment],
+                            data: [misasMoment,misteriosMoment,pregariasMoment,mediaHoraSantisimoMoment,horaTrabajoMoment,mediaHoraEstudioMoment,esfuerzosMoment,abstinenciasMoment,fraternidadMoment,letaniasMoment],
                             mensajesLeidos: 1
                         });
                     }
@@ -372,6 +391,7 @@ client.on('message_create', async (msg) => {
                         "Esfuerzos 🥇 : *"+esfuerzos+"*\n"+
                         "Abstinencias 🚫 : *"+abstinencias+"*\n"+
                         "Actos de fraternidad 🍻: *"+fraternidad+"*\n"+
+                        "Letanias del rosario 😇: *"+letanias+"*\n"+
                         "\nMensajes leidos: *"+mensajesLeidos+"*"
 
             if(unaPersona) mensajeRespuesta = "Hola _"+quePersona+"_, estos son tus registros:\n\n" + mensajeRespuesta;
@@ -380,7 +400,7 @@ client.on('message_create', async (msg) => {
                 console.log("recordsArray")
                 console.log(recordsArray)
                 //calculamos quien tiene el mayor numero de cosas
-                actualesRecords = [{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0}];
+                actualesRecords = [{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0}];
                 recordsArray.forEach(function (arrayItem) {
                     for(let i = 0; i < arrayItem.data.length; i++){
                         if(actualesRecords[i].num < arrayItem.data[i]){
@@ -403,6 +423,7 @@ client.on('message_create', async (msg) => {
                             "Más esfuerzos 🥇: _*"+actualesRecords[6].nom+"*_ ➡ *"+actualesRecords[6].num+"*\n"+
                             "Más abstinencias 🚫: _*"+actualesRecords[7].nom+"*_ ➡ *"+actualesRecords[7].num+"*\n"+
                             "Más actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
+                            "Más letanias del rosario 😇: _*"+actualesRecords[9].nom+"*_ ➡ *"+actualesRecords[9].num+"*\n"+
                             "\nMensajes leidos: "+mensajesLeidos)
             }
 

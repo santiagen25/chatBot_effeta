@@ -34,11 +34,12 @@ client.on('message_create', async (msg) => {
 
     //punteros
     //const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
-    const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
+    //const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
+    const nombreActualDelGrupo = 'Bombardegem el Cel Girona';
     //const fechaDesdeDondeSeLee = '2023-09-04';//si está '' significa que coge todos
     const fechaDesdeDondeSeLee = '2023-08-01';
-    const fechaDelRetiro = '2023-09-29';
-    //const fechaDelRetiro = '2023-10-13';
+    //const fechaDelRetiro = '2023-09-29';
+    const fechaDelRetiro = '2023-11-17';
 
     if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.startsWith('!calculale') || msg.body.startsWith('!calculadesde')) {
 
@@ -52,6 +53,7 @@ client.on('message_create', async (msg) => {
         let abstinencias = 0;
         let fraternidad = 0;
         let letanias = 0;
+        let mediaHoraAlabanza = 0;
 
         let chats = await client.getChats();
         let allMsgChats = null;
@@ -107,6 +109,7 @@ client.on('message_create', async (msg) => {
                 let abstinenciasMoment = 0;
                 let fraternidadMoment = 0;
                 let letaniasMoment = 0;
+                let mediaHoraAlabanzaMoment = 0;
                 const quePersonaMoment = (await allMsgChats[i].getContact()).pushname
 
                 if(unaPersona && !(quePersona === quePersonaMoment)) continue;
@@ -331,6 +334,29 @@ client.on('message_create', async (msg) => {
                         break;
                     }
                 }
+                if (currentmsg.indexOf('🤲') >= 0) {
+                    let whereIsEmoji = currentmsg.indexOf('🤲');
+                    let cuanGrandeEmoji = 2;
+                    while(true){
+                        if(currentmsg.indexOf('🤲🏻') >= 0 || currentmsg.indexOf('🤲🏼') >= 0 || currentmsg.indexOf('🤲🏽') >= 0 || currentmsg.indexOf('🤲🏾') >= 0 || currentmsg.indexOf('🤲🏿') >= 0) {
+                            cuanGrandeEmoji = 4;
+                        } else {
+                            cuanGrandeEmoji = 2;
+                        }
+                        let cantidad = calcularXCosas(currentmsg, parseInt(parseInt(whereIsEmoji) + parseInt(cuanGrandeEmoji)));
+                        mediaHoraAlabanza = mediaHoraAlabanza + cantidad
+                        mediaHoraAlabanzaMoment = cantidad;
+                        console.log("aqui hay "+cantidad+" medias horas de alabanza");
+                        if(currentmsg.substring(whereIsEmoji+parseInt(cuanGrandeEmoji),currentmsg.length).indexOf('🤲') >= 0){
+                            submsg = currentmsg.substring(whereIsEmoji+parseInt(cuanGrandeEmoji),currentmsg.length);
+                            //solo cambiamos la iteracion (de hecho calculamos donde está), para asi no tener que cambiar el string #smart
+                            whereIsEmoji = submsg.indexOf('🤲') + whereIsEmoji + parseInt(cuanGrandeEmoji);
+                            continue;
+                        }
+                        break;
+                    }       
+                }
+                
 
                 //después de comprobar todo se deberia hacer un substring para ver si hay emojis repetidos
 
@@ -345,6 +371,7 @@ client.on('message_create', async (msg) => {
                 // else if(allMsgChats[i].body.includes('🚫')) console.log("Una abstinencia");
                 // else if(allMsgChats[i].body.includes('🍻')) console.log("Un acto de fraternidad");
                 // else if(allMsgChats[i].body.includes('😇')) console.log("letanias del rosario");
+                // else if(allMsgChats[i].body.includes('🤲')) console.log("media hora de alabanza");
 
 
                 if(isRecords){
@@ -363,6 +390,7 @@ client.on('message_create', async (msg) => {
                             arrayItem.data[7] += abstinenciasMoment
                             arrayItem.data[8] += fraternidadMoment
                             arrayItem.data[9] += letaniasMoment
+                            arrayItem.data[10] += mediaHoraAlabanzaMoment
                             arrayItem.mensajesLeidos++
 
                             seRepiteNombre = true
@@ -373,7 +401,7 @@ client.on('message_create', async (msg) => {
                     if (!seRepiteNombre) {
                         recordsArray.push({
                             nombre: quePersonaMoment,
-                            data: [misasMoment,misteriosMoment,pregariasMoment,mediaHoraSantisimoMoment,horaTrabajoMoment,mediaHoraEstudioMoment,esfuerzosMoment,abstinenciasMoment,fraternidadMoment,letaniasMoment],
+                            data: [misasMoment,misteriosMoment,pregariasMoment,mediaHoraSantisimoMoment,horaTrabajoMoment,mediaHoraEstudioMoment,esfuerzosMoment,abstinenciasMoment,fraternidadMoment,letaniasMoment,mediaHoraAlabanzaMoment],
                             mensajesLeidos: 1
                         });
                     }
@@ -390,8 +418,9 @@ client.on('message_create', async (msg) => {
                         "Horas de Estudio o Clase 📖 : *"+(mediaHoraEstudio/2)+"*\n"+
                         "Esfuerzos 🥇 : *"+esfuerzos+"*\n"+
                         "Abstinencias 🚫 : *"+abstinencias+"*\n"+
-                        "Actos de fraternidad 🍻: *"+fraternidad+"*\n"+
-                        "Letanias del rosario 😇: *"+letanias+"*\n"+
+                        //"Actos de fraternidad 🍻: *"+fraternidad+"*\n"+
+                        //"Letanias del rosario 😇: *"+letanias+"*\n"+
+                        "Horas de alabanza 🤲: *"+(mediaHoraAlabanza/2)+"*\n"+
                         "\nMensajes leidos: *"+mensajesLeidos+"*"
 
             if(unaPersona) mensajeRespuesta = "Hola _"+quePersona+"_, estos son tus registros:\n\n" + mensajeRespuesta;
@@ -400,7 +429,7 @@ client.on('message_create', async (msg) => {
                 console.log("recordsArray")
                 console.log(recordsArray)
                 //calculamos quien tiene el mayor numero de cosas
-                actualesRecords = [{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0}];
+                actualesRecords = [{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0}];
                 recordsArray.forEach(function (arrayItem) {
                     for(let i = 0; i < arrayItem.data.length; i++){
                         if(actualesRecords[i].num < arrayItem.data[i]){
@@ -422,8 +451,9 @@ client.on('message_create', async (msg) => {
                             "Más horas de estudio 📖: _*"+actualesRecords[5].nom+"*_ ➡ *"+(actualesRecords[5].num/2)+"*\n"+
                             "Más esfuerzos 🥇: _*"+actualesRecords[6].nom+"*_ ➡ *"+actualesRecords[6].num+"*\n"+
                             "Más abstinencias 🚫: _*"+actualesRecords[7].nom+"*_ ➡ *"+actualesRecords[7].num+"*\n"+
-                            "Más actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
-                            "Más letanias del rosario 😇: _*"+actualesRecords[9].nom+"*_ ➡ *"+actualesRecords[9].num+"*\n"+
+                            //"Más actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
+                            //"Más letanias del rosario 😇: _*"+actualesRecords[9].nom+"*_ ➡ *"+actualesRecords[9].num+"*\n"+
+                            "Más horas de alabanza 🤲: _*"+actualesRecords[10].nom+"*_ ➡ *"+(actualesRecords[10].num/2)+"*\n"+
                             "\nMensajes leidos: "+mensajesLeidos)
             }
 
@@ -447,7 +477,7 @@ client.on('message_create', async (msg) => {
         const diaActual = new Date();
         const diaDelRetiro = new Date(fechaDelRetiro);
         const diasQueQuedan = (diaDelRetiro.getTime() - diaActual.getTime()) / (1000 * 3600 * 24)
-        msg.reply("Quedan *"+diasQueQuedan.toFixed()+"* dias para el retiro.");
+        msg.reply("Quedan *"+Math.ceil(diasQueQuedan)+"* dias para el retiro.");
     } else if (msg.body === "!punteros") {
         msg.reply("Punteros:\n\nNombre del grupo que se usa: " + nombreActualDelGrupo + "\n" +
                     "Fecha desde cuando se leen los mensajes: " + new Date(fechaDesdeDondeSeLee).toLocaleDateString('en-CA') + "\n" +

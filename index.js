@@ -1,5 +1,9 @@
 //para ejecutar el chatbot: node index.js
 
+//dependencia para hotfix de la libreria
+//copiar esta linea en package.json -> dependencies {}, por ejemplo debajo de "qrcode-terminal"
+//"whatsapp-web.js": "https://github.com/Julzk/whatsapp-web.js/tarball/jkr_hotfix_7"
+
 const qrcode = require('qrcode-terminal');
 
 const { Client, LocalAuth } = require('whatsapp-web.js');
@@ -33,13 +37,14 @@ client.on('message_create', async (msg) => {
     // Fired on all message creations, including your own
 
     //punteros
+    //las fechas son con formato AÑO-MES-DIA
     //const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
-    //const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
-    const nombreActualDelGrupo = 'Bombardegem el Cel Girona';
+    const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
+    //const nombreActualDelGrupo = 'Bombardegem el Cel Girona';
     //const fechaDesdeDondeSeLee = '2023-09-04';//si está '' significa que coge todos
-    const fechaDesdeDondeSeLee = '2023-08-01';
+    const fechaDesdeDondeSeLee = '2024-01-01';
     //const fechaDelRetiro = '2023-09-29';
-    const fechaDelRetiro = '2023-11-17';
+    const fechaDelRetiro = '2024-01-26';
 
     if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.startsWith('!calculale') || msg.body.startsWith('!calculadesde')) {
 
@@ -155,6 +160,11 @@ client.on('message_create', async (msg) => {
                             }
                             break;
                         }
+                    } else {
+                        console.log("aqui hay media misa...")
+                        //si llega aqui, ha encontrado el pan, pero no el vino
+                        misas++;
+                        //esto es un poco inestable... pero cubre algunos fallos humanos (si alguien solo pone el pan, o lo pone invertido (vino y pan en vez de pan y vino), pero lo que pasa es que si a alguien se le escapa un pan, ya cuenta como una misa)
                     }
                 }
                 if (currentmsg.indexOf('🌹') >= 0) {
@@ -257,15 +267,15 @@ client.on('message_create', async (msg) => {
                             currentmsg.indexOf('🥉') >= 0 ||
                             currentmsg.indexOf('🥈') >= 0) {
                     //damos por hecho que aunque se equivoquen de medalla, solo pondrán una medalla (ToDo)
-                    let whereIsEmoji = currentmsg.indexOf('🎖') != -1 ? currentmsg.indexOf('🎖') : (
-                                currentmsg.indexOf('🥇') != -1 ? currentmsg.indexOf('🥇') : (
-                                    currentmsg.indexOf('🏅') != -1 ? currentmsg.indexOf('🏅') : (
-                                        currentmsg.indexOf('🥉') != -1 ? currentmsg.indexOf('🥉') : (
-                                            currentmsg.indexOf('🥈')
-                                        )
-                                    )
-                                )
-                            );
+                    let whereIsEmoji =  currentmsg.indexOf('🎖') != -1 ? currentmsg.indexOf('🎖') : (
+                                            currentmsg.indexOf('🥇') != -1 ? currentmsg.indexOf('🥇') : (
+                                                currentmsg.indexOf('🏅') != -1 ? currentmsg.indexOf('🏅') : (
+                                                    currentmsg.indexOf('🥉') != -1 ? currentmsg.indexOf('🥉') : (
+                                                        currentmsg.indexOf('🥈')
+                                                    )
+                                                )
+                                            )
+                                        );
 
                     while(true){
                         let cantidad = calcularXCosas(currentmsg, whereIsEmoji+2);
@@ -363,7 +373,7 @@ client.on('message_create', async (msg) => {
 
                 // if(allMsgChats[i].body.includes('🍞🍷')) console.log("Una misa");
                 // else if(allMsgChats[i].body.includes('🌹')) console.log("Un rosario");
-                // else if(allMsgChats[i].body.includes('🙏')) console.log("Una plegaria");
+                // else if(allMsgChats[i].body.includes('🙏')) console.log("Una pregaria");
                 // else if(allMsgChats[i].body.includes('🕯')) console.log("Media hora delante del santísimo");
                 // else if(allMsgChats[i].body.includes('💪')) console.log("Una hora de trabajo");
                 // else if(allMsgChats[i].body.includes('📖')) console.log("Media hora de estudio o clase");
@@ -418,9 +428,9 @@ client.on('message_create', async (msg) => {
                         "Horas de Estudio o Clase 📖 : *"+(mediaHoraEstudio/2)+"*\n"+
                         "Esfuerzos 🥇 : *"+esfuerzos+"*\n"+
                         "Abstinencias 🚫 : *"+abstinencias+"*\n"+
-                        //"Actos de fraternidad 🍻: *"+fraternidad+"*\n"+
+                        "Actos de fraternidad 🍻: *"+fraternidad+"*\n"+
                         //"Letanias del rosario 😇: *"+letanias+"*\n"+
-                        "Horas de alabanza 🤲: *"+(mediaHoraAlabanza/2)+"*\n"+
+                        //"Horas de alabanza 🤲: *"+(mediaHoraAlabanza/2)+"*\n"+
                         "\nMensajes leidos: *"+mensajesLeidos+"*"
 
             if(unaPersona) mensajeRespuesta = "Hola _"+quePersona+"_, estos son tus registros:\n\n" + mensajeRespuesta;
@@ -445,15 +455,15 @@ client.on('message_create', async (msg) => {
                             //" ("+((actualesRecords[0].num*100)/misas).toFixed(2)+"%)"+
                             "*\n"+
                             "Más misterios del rosario 🌹: _*"+actualesRecords[1].nom+"*_ ➡ *"+actualesRecords[1].num+"*\n"+
-                            "Más plegarias 🙏: _*"+actualesRecords[2].nom+"*_ ➡ *"+actualesRecords[2].num+"*\n"+
+                            "Más pregarias 🙏: _*"+actualesRecords[2].nom+"*_ ➡ *"+actualesRecords[2].num+"*\n"+
                             "Más horas delante del santísimo 🕯: _*"+actualesRecords[3].nom+"*_ ➡ *"+(actualesRecords[3].num/2)+"*\n"+
                             "Más horas de trabajo 💪: _*"+actualesRecords[4].nom+"*_ ➡ *"+actualesRecords[4].num+"*\n"+
                             "Más horas de estudio 📖: _*"+actualesRecords[5].nom+"*_ ➡ *"+(actualesRecords[5].num/2)+"*\n"+
                             "Más esfuerzos 🥇: _*"+actualesRecords[6].nom+"*_ ➡ *"+actualesRecords[6].num+"*\n"+
                             "Más abstinencias 🚫: _*"+actualesRecords[7].nom+"*_ ➡ *"+actualesRecords[7].num+"*\n"+
-                            //"Más actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
+                            "Más actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
                             //"Más letanias del rosario 😇: _*"+actualesRecords[9].nom+"*_ ➡ *"+actualesRecords[9].num+"*\n"+
-                            "Más horas de alabanza 🤲: _*"+actualesRecords[10].nom+"*_ ➡ *"+(actualesRecords[10].num/2)+"*\n"+
+                            //"Más horas de alabanza 🤲: _*"+actualesRecords[10].nom+"*_ ➡ *"+(actualesRecords[10].num/2)+"*\n"+
                             "\nMensajes leidos: "+mensajesLeidos)
             }
 
@@ -466,7 +476,7 @@ client.on('message_create', async (msg) => {
     } else if (msg.body === "!info") {
         msg.reply("!calcula: Coge todos los mensajes y recuenta los emoticonos de cada uno.\n\n"+
                     "!calculame: Coge solo los mensajes de la persona que escribe el comando y muestra el recuento de emoticonos de estos.\n\n"+
-                    "!calculale: Es obligatorio poner un numero de teléfono separado de un espacio. Coge los mensajes del numero de teléfono que le hayas pedido, y los cuenta.\n\n"+
+                    "!calculale: Es obligatorio poner un numero de teléfono separado de un espacio (tal que asi '!calculale 34681324967'). Coge los mensajes del numero de teléfono que le hayas pedido, y los cuenta.\n\n"+
                     "!calculadesde: Es obligatorio poner una fecha con formato YYYY-MM-DD (2023-09-15) o MM-DD-YYYY (09-15-2023) separada de un espacio. Coge los mensajes a partir de la fecha introducida.\n\n"+
                     "!records: cuenta los emoticonos de cada persona, y crea una tabla de records con las personas que han introducido más emoticonos.\n\n"+
                     "!help, !effeta, !ayuda: Ayuda general.\n\n"+
@@ -542,5 +552,7 @@ function stringIncludesEmoji (s) {
                 !s.includes('📖') &&
                 !s.includes('🎖') && !s.includes('🥇') && !s.includes('🏅') && !s.includes('🥉') && !s.includes('🥈') &&
                 !s.includes('🚫') &&
-                !s.includes('🍻')
+                !s.includes('🍻') &&
+                !s.includes('😇') &&
+                !s.includes('🤲')
 }

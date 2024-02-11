@@ -39,14 +39,14 @@ client.on('message_create', async (msg) => {
     //punteros
     //las fechas son con formato AÑO-MES-DIA
     //const nombreActualDelGrupo = 'BOMBARDEEMOS EL CIELO ✝️🤍';
-    const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
-    //const nombreActualDelGrupo = 'Bombardegem el Cel Girona';
+    //const nombreActualDelGrupo = 'ORACIONS EFFETÁ MARESME 🙏🏻';
+    const nombreActualDelGrupo = 'Bombardegem el Cel Girona';
     //const fechaDesdeDondeSeLee = '2023-09-04';//si está '' significa que coge todos
     const fechaDesdeDondeSeLee = '2024-01-01';
     //const fechaDelRetiro = '2023-09-29';
-    const fechaDelRetiro = '2024-01-26';
+    const fechaDelRetiro = '2024-03-08';
 
-    if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.startsWith('!calculale') || msg.body.startsWith('!calculadesde')) {
+    if (msg.body === '!calcula' || msg.body === '!calculame' || msg.body === '!records' || msg.body.startsWith('!calculale') || msg.body.startsWith('!calculadesde') || msg.body === '!calcula cat') {
 
         let misas = 0;
         let misterios = 0;
@@ -207,21 +207,9 @@ client.on('message_create', async (msg) => {
                     }
                         
                 }
-                if (currentmsg.indexOf('🕯') >= 0) {
-                    let whereIsEmoji = currentmsg.indexOf('🕯');
-                    while(true){
-                        let cantidad = calcularXCosas(currentmsg, whereIsEmoji+2);
-                        mediaHoraSantisimo = mediaHoraSantisimo + cantidad
-                        mediaHoraSantisimoMoment = cantidad;
-                        console.log("aqui hay "+cantidad+" medias horas al santisimo");
-                        if(currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('🕯') >= 0){
-                            submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
-                            whereIsEmoji = submsg.indexOf('🕯') + whereIsEmoji + 2;
-                            continue;
-                        }
-                        break;
-                    }
-                }
+
+                ({variable: mediaHoraSantisimo, varMoment: mediaHoraSantisimoMoment} = calculameEsteEmoji(currentmsg, '🕯', 'medias horas al santisimo', mediaHoraSantisimo, mediaHoraSantisimoMoment));
+                
                 if (currentmsg.indexOf('💪') >= 0) {
                     let whereIsEmoji = currentmsg.indexOf('💪');
                     let cuanGrandeEmoji = 2;
@@ -245,28 +233,32 @@ client.on('message_create', async (msg) => {
                         break;
                     }
                 }
-                if (currentmsg.indexOf('📖') >= 0) {
-                    let whereIsEmoji = currentmsg.indexOf('📖');
-                    while(true){
-                        let cantidad = calcularXCosas(currentmsg, whereIsEmoji+2);
-                        mediaHoraEstudio = mediaHoraEstudio + cantidad
-                        mediaHoraEstudioMoment = cantidad;
-                        console.log("aqui hay "+cantidad+" medias horas de estudio");
-                        if(currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('📖') >= 0){
-                            submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
-                            whereIsEmoji = submsg.indexOf('📖') + whereIsEmoji + 2;
-                            continue;
-                        }
-                        break;
-                    }
-                }
+                // if (currentmsg.indexOf('📖') >= 0) {
+                //     let whereIsEmoji = currentmsg.indexOf('📖');
+                //     while(true){
+                //         let cantidad = calcularXCosas(currentmsg, whereIsEmoji+2);
+                //         mediaHoraEstudio = mediaHoraEstudio + cantidad
+                //         mediaHoraEstudioMoment = cantidad;
+                //         console.log("aqui hay "+cantidad+" medias horas de estudio");
+                //         if(currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('📖') >= 0){
+                //             submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
+                //             whereIsEmoji = submsg.indexOf('📖') + whereIsEmoji + 2;
+                //             continue;
+                //         }
+                //         break;
+                //     }
+                // }
+
+                //prueba para libros
+                ({variable: mediaHoraEstudio, varMoment: mediaHoraEstudioMoment} = calculameEsteEmoji(currentmsg, '📖', 'horas de estudio', mediaHoraEstudio, mediaHoraEstudioMoment));
+
                 //console.log('🎖🥇🏅🥉🥈')
                 if (currentmsg.indexOf('🎖') >= 0 ||
                             currentmsg.indexOf('🥇') >= 0 ||
                             currentmsg.indexOf('🏅') >= 0 ||
                             currentmsg.indexOf('🥉') >= 0 ||
                             currentmsg.indexOf('🥈') >= 0) {
-                    //damos por hecho que aunque se equivoquen de medalla, solo pondrán una medalla (ToDo)
+                    //hay un pequeño fallo, si se ponen dos medallas diferentes, solo detecta una de ellas (ToDo). Para solventarlo habria que separar cada una de las 5 medallas como si fueran emojis diferentes (que lo son, pero no me gustaba la idea, por eso he querido juntarlo todo en el mismo saco)
                     let whereIsEmoji =  currentmsg.indexOf('🎖') != -1 ? currentmsg.indexOf('🎖') : (
                                             currentmsg.indexOf('🥇') != -1 ? currentmsg.indexOf('🥇') : (
                                                 currentmsg.indexOf('🏅') != -1 ? currentmsg.indexOf('🏅') : (
@@ -287,13 +279,16 @@ client.on('message_create', async (msg) => {
                                     currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('🏅') >= 0 ||
                                     currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('🥉') >= 0 ||
                                     currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('🥈') >= 0){
-                            submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
-                            whereIsEmoji = submsg.indexOf('🎖') != -1 ? submsg.indexOf('🎖') :
-                                        submsg.indexOf('🥇') != -1 ? submsg.indexOf('🥇') :
-                                        submsg.indexOf('🏅') != -1 ? submsg.indexOf('🏅') :
-                                        submsg.indexOf('🥉') != -1 ? submsg.indexOf('🥉') :
-                                        submsg.indexOf('🥈')
-                                        + whereIsEmoji + 2;
+                            let submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
+                            whereIsEmoji =  (submsg.indexOf('🎖') != -1 ? submsg.indexOf('🎖') : (
+                                                submsg.indexOf('🥇') != -1 ? submsg.indexOf('🥇') : (
+                                                    submsg.indexOf('🏅') != -1 ? submsg.indexOf('🏅') : (
+                                                        submsg.indexOf('🥉') != -1 ? submsg.indexOf('🥉') : (
+                                                            submsg.indexOf('🥈') != -1 ? submsg.indexOf('🥈') : 0
+                                                        )
+                                                    )
+                                                )
+                                            )) + whereIsEmoji + 2;
                             continue;
                         }
                         break;
@@ -422,16 +417,31 @@ client.on('message_create', async (msg) => {
 
             let mensajeRespuesta = "Recuento:\n\nMisas 🍞🍷 : *"+misas+"*\n"+
                         "Misterios del Rosario 🌹 : *"+misterios+"*\n"+
-                        "Pregarias 🙏 : *"+pregarias+"*\n"+
+                        "Oraciones 🙏 : *"+pregarias+"*\n"+
                         "Horas delante del Santísimo 🕯 : *"+(mediaHoraSantisimo/2)+"*\n"+
                         "Horas de trabajo 💪 : *"+horaTrabajo+"*\n"+
                         "Horas de Estudio o Clase 📖 : *"+(mediaHoraEstudio/2)+"*\n"+
                         "Esfuerzos 🥇 : *"+esfuerzos+"*\n"+
                         "Abstinencias 🚫 : *"+abstinencias+"*\n"+
                         "Actos de fraternidad 🍻: *"+fraternidad+"*\n"+
-                        //"Letanias del rosario 😇: *"+letanias+"*\n"+
-                        //"Horas de alabanza 🤲: *"+(mediaHoraAlabanza/2)+"*\n"+
-                        "\nMensajes leidos: *"+mensajesLeidos+"*"
+                        "Letanias del rosario 😇: *"+letanias+"*\n"+
+                        "Horas de alabanza 🤲: *"+(mediaHoraAlabanza/2)+"*\n"+
+                        "\nMensajes leidos: *"+mensajesLeidos+"*";
+            
+            if (msg.body === '!calcula cat') {
+                mensajeRespuesta = "Recompte:\n\nMisses 🍞🍷 : *"+misas+"*\n"+
+                        "Misteris del Rosari 🌹 : *"+misterios+"*\n"+
+                        "Pregaries 🙏 : *"+pregarias+"*\n"+
+                        "Hores davant del Santíssim 🕯 : *"+(mediaHoraSantisimo/2)+"*\n"+
+                        "Hores de feina 💪 : *"+horaTrabajo+"*\n"+
+                        "Hores d'Estudi o Classe 📖 : *"+(mediaHoraEstudio/2)+"*\n"+
+                        "Esforços 🥇 : *"+esfuerzos+"*\n"+
+                        "Abstinències 🚫 : *"+abstinencias+"*\n"+
+                        "Actes de Fraternitat 🍻: *"+fraternidad+"*\n"+
+                        "Lletanies del Rosari 😇: *"+letanias+"*\n"+
+                        "Hores de Lloança 🤲: *"+(mediaHoraAlabanza/2)+"*\n"+
+                        "\nMissatges llegits : *"+mensajesLeidos+"*"
+            }
 
             if(unaPersona) mensajeRespuesta = "Hola _"+quePersona+"_, estos son tus registros:\n\n" + mensajeRespuesta;
             if(!isRecords) msg.reply(mensajeRespuesta);
@@ -462,8 +472,8 @@ client.on('message_create', async (msg) => {
                             "Más esfuerzos 🥇: _*"+actualesRecords[6].nom+"*_ ➡ *"+actualesRecords[6].num+"*\n"+
                             "Más abstinencias 🚫: _*"+actualesRecords[7].nom+"*_ ➡ *"+actualesRecords[7].num+"*\n"+
                             "Más actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
-                            //"Más letanias del rosario 😇: _*"+actualesRecords[9].nom+"*_ ➡ *"+actualesRecords[9].num+"*\n"+
-                            //"Más horas de alabanza 🤲: _*"+actualesRecords[10].nom+"*_ ➡ *"+(actualesRecords[10].num/2)+"*\n"+
+                            "Más letanias del rosario 😇: _*"+actualesRecords[9].nom+"*_ ➡ *"+actualesRecords[9].num+"*\n"+
+                            "Más horas de alabanza 🤲: _*"+actualesRecords[10].nom+"*_ ➡ *"+(actualesRecords[10].num/2)+"*\n"+
                             "\nMensajes leidos: "+mensajesLeidos)
             }
 
@@ -482,7 +492,8 @@ client.on('message_create', async (msg) => {
                     "!help, !effeta, !ayuda: Ayuda general.\n\n"+
                     "!info: Se muestran estos comandos.\n\n"+
                     "!cuantoqueda: dias que quedan para el retiro.\n\n"+
-                    "!punteros: De donde se sacan los datos, y desde cuando.")
+                    "!punteros: De donde se sacan los datos, y desde cuando.\n\n"+
+                    "!calcula cat: Torna el càlcul en Català")
     } else if (msg.body === "!cuantoqueda") {
         const diaActual = new Date();
         const diaDelRetiro = new Date(fechaDelRetiro);
@@ -494,6 +505,29 @@ client.on('message_create', async (msg) => {
                     "Fecha del retiro: " + new Date(fechaDelRetiro).toLocaleDateString('en-CA'))
     }
 });
+
+function calculameEsteEmoji (currentmsg, emoji, nombreEmoji, variable, varMoment) {
+    if (currentmsg.indexOf(emoji) >= 0) {
+        let whereIsEmoji = currentmsg.indexOf(emoji);
+        while(true){
+            let cantidad = calcularXCosas(currentmsg, whereIsEmoji+2);
+            variable += cantidad
+            varMoment = cantidad;
+            console.log("aqui hay "+cantidad+" "+nombreEmoji);
+            if(currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf(emoji) >= 0){
+                const submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
+                whereIsEmoji = submsg.indexOf(emoji) + whereIsEmoji + 2;
+                continue;
+            }
+            break;
+        }
+    }
+
+    return {
+        variable: variable,
+        varMoment: varMoment
+    }
+}
 
 function calcularXCosas(msg, iteracion){
     //console.log("\t\t\t\tmensaje: "+msg+"\titeracion: "+iteracion);

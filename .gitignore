@@ -1,5 +1,7 @@
 node_modules
 .wwebjs_auth
+.wwebjs_auth_old
 .wwebjs_cache
+.wwebjs_cache_old
 cartas*
 caminantes.txt

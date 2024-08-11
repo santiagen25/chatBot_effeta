@@ -132,7 +132,8 @@ client.on('message_create', async (msg) => {
                 }
 
                 //vamos a intentar arreglar la paridad de Blanca Lauci
-                if(!isNaN(currentmsg.substring(0,1)) && stringIncludesEmoji(currentmsg.substring(currentmsg.length-1,currentmsg.length))){
+                //algún iluminado está haciendo lo mismo que Blanca, pero con una X delante...
+                if((!isNaN(currentmsg.substring(0,1)) || currentmsg.substring(0,1).toLowerCase === 'x') && stringIncludesEmoji(currentmsg.substring(currentmsg.length-1,currentmsg.length))){
                     //vamos a bypasearlo por el momento, pero en el futuro la idea seria calcular a la inversa este tipo de paridad
                     currentmsg = currentmsg.replace(/[0-9]/g, '');
                 }
@@ -167,23 +168,10 @@ client.on('message_create', async (msg) => {
                         //esto es un poco inestable... pero cubre algunos fallos humanos (si alguien solo pone el pan, o lo pone invertido (vino y pan en vez de pan y vino), pero lo que pasa es que si a alguien se le escapa un pan, ya cuenta como una misa)
                     }
                 }
-                if (currentmsg.indexOf('🌹') >= 0) {
-                    let whereIsEmoji = currentmsg.indexOf('🌹');
-                    while(true){
-                        let cantidad = calcularXCosas(currentmsg, whereIsEmoji+2);
-                        misterios = misterios + cantidad
-                        misteriosMoment = cantidad;
-                        console.log("aqui hay "+cantidad+" misterios del rosario");
-                        if(currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('🌹') >= 0){
-                            console.log("hay mas rosas!!!!");
-                            submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
-                            //solo cambiamos la iteracion (de hecho calculamos donde está), para asi no tener que cambiar el string #smart
-                            whereIsEmoji = submsg.indexOf('🌹') + whereIsEmoji + 2;
-                            continue;
-                        }
-                        break;
-                    }
-                }
+                
+                //prueba para rosas
+                ({variable: misterios, varMoment: misteriosMoment} = calculameEsteEmoji(currentmsg, '🌹', 'misterios del rosario', misterios, misteriosMoment));
+
                 if (currentmsg.indexOf('🙏') >= 0) {
                     let whereIsEmoji = currentmsg.indexOf('🙏');
                     let cuanGrandeEmoji = 2;
@@ -208,6 +196,7 @@ client.on('message_create', async (msg) => {
                         
                 }
 
+                //media hora en el santisimo
                 ({variable: mediaHoraSantisimo, varMoment: mediaHoraSantisimoMoment} = calculameEsteEmoji(currentmsg, '🕯', 'medias horas al santisimo', mediaHoraSantisimo, mediaHoraSantisimoMoment));
                 
                 if (currentmsg.indexOf('💪') >= 0) {
@@ -233,21 +222,6 @@ client.on('message_create', async (msg) => {
                         break;
                     }
                 }
-                // if (currentmsg.indexOf('📖') >= 0) {
-                //     let whereIsEmoji = currentmsg.indexOf('📖');
-                //     while(true){
-                //         let cantidad = calcularXCosas(currentmsg, whereIsEmoji+2);
-                //         mediaHoraEstudio = mediaHoraEstudio + cantidad
-                //         mediaHoraEstudioMoment = cantidad;
-                //         console.log("aqui hay "+cantidad+" medias horas de estudio");
-                //         if(currentmsg.substring(whereIsEmoji+2,currentmsg.length).indexOf('📖') >= 0){
-                //             submsg = currentmsg.substring(whereIsEmoji+2,currentmsg.length);
-                //             whereIsEmoji = submsg.indexOf('📖') + whereIsEmoji + 2;
-                //             continue;
-                //         }
-                //         break;
-                //     }
-                // }
 
                 //prueba para libros
                 ({variable: mediaHoraEstudio, varMoment: mediaHoraEstudioMoment} = calculameEsteEmoji(currentmsg, '📖', 'horas de estudio', mediaHoraEstudio, mediaHoraEstudioMoment));
@@ -569,9 +543,6 @@ function calcularXCosas(msg, iteracion){
             //del 1 al 9
             return parseInt(msg.charAt(iteracion));
         }
-    } else if (msg.length > iteracion && (msg.charAt(iteracion) == ':')) {
-        //si hay : no lo cuentes, porque es la descripcion de la cuenta de los mismos emojis!
-        return 0;
     }
 
     return 1;

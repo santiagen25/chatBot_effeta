@@ -65,6 +65,7 @@ client.on('message_create', async (msg) => {
 
         const unaPersona = msg.body === '!calculame' || msg.body.includes("!calculale");
         let quePersona;
+        let queNumeroTelefono;
         try{
             if(unaPersona) quePersona = msg.body === '!calculame' ? (await msg.getContact()).pushname : (await client.getContactById(msg.body.substring(11,22)+'@c.us')).pushname
         } catch (error) {
@@ -116,6 +117,7 @@ client.on('message_create', async (msg) => {
                 let letaniasMoment = 0;
                 let mediaHoraAlabanzaMoment = 0;
                 const quePersonaMoment = (await allMsgChats[i].getContact()).pushname
+                const queNumeroTelefonoMoment = (await allMsgChats[i].getContact()).number
 
                 if(unaPersona && !(quePersona === quePersonaMoment)) continue;
 
@@ -308,6 +310,7 @@ client.on('message_create', async (msg) => {
                     if (!seRepiteNombre) {
                         recordsArray.push({
                             nombre: quePersonaMoment,
+                            telefono: queNumeroTelefonoMoment,
                             data: [misasMoment,misteriosMoment,pregariasMoment,mediaHoraSantisimoMoment,horaTrabajoMoment,mediaHoraEstudioMoment,esfuerzosMoment,abstinenciasMoment,fraternidadMoment,letaniasMoment,mediaHoraAlabanzaMoment],
                             mensajesLeidos: 1
                         });
@@ -350,12 +353,13 @@ client.on('message_create', async (msg) => {
             else {
                 console.log("recordsArray")
                 console.log(recordsArray)
-                //calculamos quien tiene el mayor numero de cosas
-                actualesRecords = [{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0},{nom:"---",num:0}];
+                //calculamos quien tiene el mayor numero de cosas.
+                let actualesRecords = [{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''},{nom:"---",num:0,pho:''}];
                 recordsArray.forEach(function (arrayItem) {
                     for(let i = 0; i < arrayItem.data.length; i++){
                         if(actualesRecords[i].num < arrayItem.data[i]){
-                            actualesRecords[i].num = arrayItem.data[i]
+                            actualesRecords[i].num = arrayItem.data[i];
+                            actualesRecords[i].pho = arrayItem.telefono;
                             actualesRecords[i].nom = arrayItem.nombre;
                         }
                     }
@@ -363,20 +367,20 @@ client.on('message_create', async (msg) => {
                 console.log("actualesRecords")
                 console.log(actualesRecords)
 
-                msg.reply("Records:\n\nMás misas 🍞🍷: _*"+actualesRecords[0].nom+"*_ ➡ *"+actualesRecords[0].num+
+                msg.reply("Records:\n\nMás misas 🍞🍷: _*"+(actualesRecords[0].nom ?? actualesRecords[0].pho)+"*_ -> *"+actualesRecords[0].num+
                             //" ("+((actualesRecords[0].num*100)/misas).toFixed(2)+"%)"+
                             "*\n"+
-                            "Más misterios del rosario 🌹: _*"+actualesRecords[1].nom+"*_ ➡ *"+actualesRecords[1].num+"*\n"+
-                            "Más pregarias 🙏: _*"+actualesRecords[2].nom+"*_ ➡ *"+actualesRecords[2].num+"*\n"+
-                            "Más horas delante del santísimo 🕯: _*"+actualesRecords[3].nom+"*_ ➡ *"+(actualesRecords[3].num/2)+"*\n"+
-                            "Más horas de trabajo 💪: _*"+actualesRecords[4].nom+"*_ ➡ *"+actualesRecords[4].num+"*\n"+
-                            "Más horas de estudio 📖: _*"+actualesRecords[5].nom+"*_ ➡ *"+(actualesRecords[5].num/2)+"*\n"+
-                            "Más esfuerzos 🥇: _*"+actualesRecords[6].nom+"*_ ➡ *"+actualesRecords[6].num+"*\n"+
-                            "Más abstinencias 🚫: _*"+actualesRecords[7].nom+"*_ ➡ *"+actualesRecords[7].num+"*\n"+
-                            "Más actos de fraternidad 🍻: _*"+actualesRecords[8].nom+"*_ ➡ *"+actualesRecords[8].num+"*\n"+
-                            //"Más letanias del rosario 😇: _*"+actualesRecords[9].nom+"*_ ➡ *"+actualesRecords[9].num+"*\n"+
-                            //"Más horas de alabanza 🤲: _*"+actualesRecords[10].nom+"*_ ➡ *"+(actualesRecords[10].num/2)+"*\n"+
-                            "\nMensajes leidos: "+mensajesLeidos)
+                            "Más misterios del rosario 🌹: _*"+(actualesRecords[1].nom ?? actualesRecords[1].pho)+"*_ -> *"+actualesRecords[1].num+"*\n"+
+                            "Más pregarias 🙏: _*"+(actualesRecords[2].nom ?? actualesRecords[2].pho)+"*_ -> *"+actualesRecords[2].num+"*\n"+
+                            "Más horas delante del santísimo 🕯: _*"+(actualesRecords[3].nom ?? actualesRecords[3].pho)+"*_ -> *"+(actualesRecords[3].num/2)+"*\n"+
+                            "Más horas de trabajo 💪: _*"+(actualesRecords[4].nom ?? actualesRecords[4].pho)+"*_ -> *"+actualesRecords[4].num+"*\n"+
+                            "Más horas de estudio 📖: _*"+(actualesRecords[5].nom ?? actualesRecords[5].pho)+"*_ -> *"+(actualesRecords[5].num/2)+"*\n"+
+                            "Más esfuerzos 🥇: _*"+(actualesRecords[6].nom ?? actualesRecords[6].pho)+"*_ -> *"+actualesRecords[6].num+"*\n"+
+                            "Más abstinencias 🚫: _*"+(actualesRecords[7].nom ?? actualesRecords[7].pho)+"*_ -> *"+actualesRecords[7].num+"*\n"+
+                            "Más actos de fraternidad 🍻: _*"+(actualesRecords[8].nom ?? actualesRecords[8].pho)+"*_ -> *"+actualesRecords[8].num+"*\n"+
+                            //"Más letanias del rosario 😇: _*"+(actualesRecords[9].nom ?? actualesRecords[9].pho)+"*_ ➡ *"+actualesRecords[9].num+"*\n"+
+                            //"Más horas de alabanza 🤲: _*"+(actualesRecords[10].nom ?? actualesRecords[10].pho)+"*_ ➡ *"+(actualesRecords[10].num/2)+"*\n"+
+                            "\nMensajes leidos: *"+mensajesLeidos+"*")
             }
 
         } else {
@@ -405,7 +409,32 @@ client.on('message_create', async (msg) => {
         msg.reply("Punteros:\n\nNombre del grupo que se usa: " + nombreActualDelGrupo + "\n" +
                     "Fecha desde cuando se leen los mensajes: " + new Date(fechaDesdeDondeSeLee).toLocaleDateString('en-CA') + "\n" +
                     "Fecha del retiro: " + new Date(fechaDelRetiro).toLocaleDateString('en-CA'))
-    }
+    } else if (msg.body === "!horas") {
+        //ToDo
+        misas = misas * 0.66
+        misterios = misterios * 0.06
+        pregarias = pregarias * 0.03
+        mediaHoraSantisimo = 
+        esfuerzos = esfuerzos * 0.08
+        abstinencias = abstinencias * 0.07
+        fraternidad = fraternidad * 0.3
+        const horasTotales = misas + misterios + pregarias + mediaHoraSantisimo
+        
+        const horasRespuesta = "Recuento en horas:\n\nMisas 🍞🍷 : *"+misas+"*\n"+
+                        "Misterios del Rosario 🌹 : *"+misterios+"*\n"+
+                        "Oraciones 🙏 : *"+pregarias+"*\n"+
+                        "Horas delante del Santísimo 🕯 : *"+(mediaHoraSantisimo/2)+"*\n"+
+                        "Horas de trabajo 💪 : *"+horaTrabajo+"*\n"+
+                        "Horas de Estudio o Clase 📖 : *"+(mediaHoraEstudio/2)+"*\n"+
+                        "Esfuerzos 🥇 : *"+esfuerzos+"*\n"+
+                        "Abstinencias 🚫 : *"+abstinencias+"*\n"+
+                        "Actos de fraternidad 🍻: *"+fraternidad+"*\n"+
+                        //"Letanias del rosario 😇: *"+letanias+"*\n"+
+                        //"Horas de alabanza 🤲: *"+(mediaHoraAlabanza/2)+"*\n"+
+                        "\nMensajes leidos: *"+mensajesLeidos+"*\n"+
+                        "Horas totales: *"+horasTotales+"*";
+        msg.reply(horasRespuesta)
+    } 
 });
 
 function calculameEsteEmoji (currentmsg, emoji, nombreEmoji, variable, varMoment) {

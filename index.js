@@ -239,6 +239,7 @@ client.on('message_create', async (msg) => {
                 
                 //prueba para fraternidad
                 ({variable: fraternidad, varMoment: fraternidadMoment} = calculameEsteEmoji(currentmsg, '🍻', 'actos de fraternidad', fraternidad, fraternidadMoment));
+                ({variable: fraternidad, varMoment: fraternidadMoment} = calculameEsteEmoji(currentmsg, '🍺', 'actos de fraternidad', fraternidad, fraternidadMoment));
                 
                 //prueba para letanias
                 ({variable: letanias, varMoment: letaniasMoment} = calculameEsteEmoji(currentmsg, '😇', 'letanias del rosario', letanias, letaniasMoment));
@@ -389,17 +390,29 @@ client.on('message_create', async (msg) => {
         }
     } else if (msg.body === "!help" || msg.body === "!effeta" || msg.body === "!ayuda") {
         msg.reply("Escribe !calcula, !calculame, !calculale 34XXXXXXXXX, !records o !info")
-    } else if (msg.body === "!info") {
+    } else if (msg.body === "!comandos") {
         msg.reply("!calcula: Coge todos los mensajes y recuenta los emoticonos de cada uno.\n\n"+
                     "!calculame: Coge solo los mensajes de la persona que escribe el comando y muestra el recuento de emoticonos de estos.\n\n"+
                     "!calculale: Es obligatorio poner un numero de teléfono separado de un espacio (tal que asi '!calculale 34681324967'). Coge los mensajes del numero de teléfono que le hayas pedido, y los cuenta.\n\n"+
                     "!calculadesde: Es obligatorio poner una fecha con formato YYYY-MM-DD (2023-09-15) o MM-DD-YYYY (09-15-2023) separada de un espacio. Coge los mensajes a partir de la fecha introducida.\n\n"+
                     "!records: cuenta los emoticonos de cada persona, y crea una tabla de records con las personas que han introducido más emoticonos.\n\n"+
                     "!help, !effeta, !ayuda: Ayuda general.\n\n"+
-                    "!info: Se muestran estos comandos.\n\n"+
+                    "!comandos: Se muestran estos comandos.\n\n"+
+                    "!info: Información del ChatBot-Effeta.\n\n"+
                     "!cuantoqueda: dias que quedan para el retiro.\n\n"+
                     "!punteros: De donde se sacan los datos, y desde cuando.\n\n"+
                     "!calcula cat: Torna el càlcul en Català")
+    } else if (msg.body === "!info" || msg.body === "!hola") {
+        msg.reply("¡Hola! Soy ChatBot-Effeta, y estoy programado para contar de forma automática los emoticonos del grupo de oración.\n"+
+                    "Por favor, para facilitarme el trabajo sigue las siguientes reglas:\n\n"+
+                    "Siempre que quieras poner la cantidad de un emoticono utiliza los siguientes formatos:\n\t🙏3\n\t🙏x3\n\t🙏X3\n\t🙏*3\n\t🙏🙏🙏\n\n"+
+                    "Puedes escribir espacios entre emoticonos, símbolos y números, o puedes escribirlo todo junto, no me importa:\n\t🙏 x 3\n\t🙏x3\n\t🙏x 3\n\t🙏 x3\n\n"+
+                    "Recuerda siempre poner los emoticonos a la derecha, pues los emoticonos a la izquierda no los puedo leer bien...\n\t_Si me escribes:_\n\t🙏\n\t5🌹\n\t_Creere que has realizado 5 oraciones en lugar de 5 misterios del rosario._\n\n"+
+                    "No escribas decimales, pues tampoco los entiendo bien...\n\t_Si me escribes:_\n\t🙏3,5\n\t_Creere que has realizado solo 3 oraciones en lugar de 3,5.\n\n"+
+                    "Si te has equivocado en algún mensaje, puedes borrarlo o editarlo. Yo solo leeré todos los mensajes cuando alguien escriba !calcula\n\n"+
+                    "Si quieres escribir algún mensaje y te preocupa poner emoticonos que yo pueda contar, ten en cuenta que yo solo contaré los mensajes en los que encuentre emoticonos en los primeros 7 carácteres, por ejemplo:\n\t*¡Hola! ¿Que tal estás? Yo como una 🌹*\n\t_Este mensaje no lo contaré_\n\t*La 🌹 de mi casa es muy bonita*\n\t_Este mensaje sí lo contaré_\n\n"+
+                    "Creo que ya sabes todo lo que necesitas.\n\n"+
+                    "Si tienes alguna duda puedes escribir !help o !comandos.")
     } else if (msg.body === "!cuantoqueda") {
         const diaActual = new Date();
         const diaDelRetiro = new Date(fechaDelRetiro);

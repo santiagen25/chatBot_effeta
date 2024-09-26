@@ -2,6 +2,7 @@ node_modules
 .wwebjs_auth
 .wwebjs_auth_old
 .wwebjs_cache
-.wwebjs_cache_old
+.wwebjs_cache_old 
+secundarias.txt
 cartas*
 caminantes.txt
